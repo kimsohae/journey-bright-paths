@@ -1,12 +1,20 @@
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import Map, { Marker, NavigationControl, Source, Layer } from 'react-map-gl';
+import Map, { 
+  Marker, 
+  NavigationControl, 
+  Source, 
+  Layer,
+  MapRef,
+  ViewStateChangeEvent,
+  MapLayerMouseEvent
+} from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import mapboxgl from 'mapbox-gl';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+import { LngLatBounds } from 'mapbox-gl';
 
 // We'll use a custom token input since the default one isn't working
 const DEFAULT_MAPBOX_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4M29iazA2Z2gycXA4N2pmbDZmangifQ.-g_vE53SD2WrJ6tFX7QHmA';
@@ -45,7 +53,7 @@ const MapView: React.FC<MapViewProps> = ({
   
   const [showTokenInput, setShowTokenInput] = useState(!localStorage.getItem('mapbox_token'));
 
-  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const mapRef = useRef<MapRef>(null);
 
   // Generate GeoJSON for route line
   const routeGeoJson = {
@@ -57,7 +65,11 @@ const MapView: React.FC<MapViewProps> = ({
     }
   };
 
-  const handleClick = useCallback((event: any) => {
+  const handleViewStateChange = useCallback((evt: ViewStateChangeEvent) => {
+    setViewState(evt.viewState);
+  }, []);
+
+  const handleClick = useCallback((event: MapLayerMouseEvent) => {
     const { lng, lat } = event.lngLat;
     
     // Generate a new waypoint
@@ -79,7 +91,7 @@ const MapView: React.FC<MapViewProps> = ({
   useEffect(() => {
     // If we have waypoints, fit the map to show all waypoints
     if (mapRef.current && waypoints.length > 1) {
-      const bounds = new mapboxgl.LngLatBounds();
+      const bounds = new LngLatBounds();
       waypoints.forEach((waypoint) => {
         bounds.extend([waypoint.longitude, waypoint.latitude]);
       });
@@ -125,10 +137,14 @@ const MapView: React.FC<MapViewProps> = ({
         {...viewState}
         style={{ width: '100%', height: '100%' }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
-        onMove={(evt) => setViewState(evt.viewState)}
+        onMove={handleViewStateChange}
         onClick={handleClick}
         mapboxAccessToken={mapboxToken}
         attributionControl={false}
+        reuseMaps
+        maxZoom={20}
+        minZoom={1}
+        cooperativeGestures
       >
         <NavigationControl position="top-right" />
         
