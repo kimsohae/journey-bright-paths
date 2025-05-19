@@ -2,12 +2,14 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import Map, { Marker, NavigationControl, Source, Layer } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { MapPin, Navigation } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import mapboxgl from 'mapbox-gl';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
 
-// Use a free mapbox token for demo purposes
-const MAPBOX_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4M29iazA2Z2gycXA4N2pmbDZmangifQ.-g_vE53SD2WrJ6tFX7QHmA';
+// We'll use a custom token input since the default one isn't working
+const DEFAULT_MAPBOX_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4M29iazA2Z2gycXA4N2pmbDZmangifQ.-g_vE53SD2WrJ6tFX7QHmA';
 
 interface Waypoint {
   id: string;
@@ -37,7 +39,13 @@ const MapView: React.FC<MapViewProps> = ({
     zoom: 11
   });
 
-  const mapRef = useRef<any>(null);
+  const [mapboxToken, setMapboxToken] = useState(
+    localStorage.getItem('mapbox_token') || DEFAULT_MAPBOX_TOKEN
+  );
+  
+  const [showTokenInput, setShowTokenInput] = useState(!localStorage.getItem('mapbox_token'));
+
+  const mapRef = useRef<mapboxgl.Map | null>(null);
 
   // Generate GeoJSON for route line
   const routeGeoJson = {
@@ -63,6 +71,11 @@ const MapView: React.FC<MapViewProps> = ({
     onWaypointAdd(newWaypoint);
   }, [waypoints, onWaypointAdd]);
 
+  const saveMapboxToken = () => {
+    localStorage.setItem('mapbox_token', mapboxToken);
+    setShowTokenInput(false);
+  };
+
   useEffect(() => {
     // If we have waypoints, fit the map to show all waypoints
     if (mapRef.current && waypoints.length > 1) {
@@ -78,6 +91,33 @@ const MapView: React.FC<MapViewProps> = ({
     }
   }, [waypoints]);
 
+  if (showTokenInput) {
+    return (
+      <div className="h-full w-full rounded-xl overflow-hidden flex flex-col items-center justify-center bg-gray-100 p-6">
+        <div className="bg-white p-6 rounded-lg shadow-md max-w-md w-full">
+          <h2 className="text-xl font-bold mb-4">Mapbox API Token Required</h2>
+          <p className="mb-4 text-muted-foreground">
+            To use the map functionality, please enter your Mapbox public token below. 
+            You can find or create your token at <a href="https://account.mapbox.com/access-tokens/" target="_blank" rel="noopener noreferrer" className="text-travel-purple underline">Mapbox Tokens Page</a>.
+          </p>
+          <Input
+            value={mapboxToken}
+            onChange={(e) => setMapboxToken(e.target.value)}
+            placeholder="Enter your Mapbox token"
+            className="mb-4"
+          />
+          <Button 
+            onClick={saveMapboxToken} 
+            disabled={!mapboxToken || mapboxToken.length < 20}
+            className="w-full"
+          >
+            Save Token & Load Map
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="h-full w-full rounded-xl overflow-hidden">
       <Map
@@ -87,7 +127,7 @@ const MapView: React.FC<MapViewProps> = ({
         mapStyle="mapbox://styles/mapbox/streets-v12"
         onMove={(evt) => setViewState(evt.viewState)}
         onClick={handleClick}
-        mapboxAccessToken={MAPBOX_TOKEN}
+        mapboxAccessToken={mapboxToken}
         attributionControl={false}
       >
         <NavigationControl position="top-right" />
