@@ -21,7 +21,7 @@ export function useGetRealtimeArrival(statnNm: string) {
     queryFn: async () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.position });
       return await fetch(
-        `http://swopenapi.seoul.go.kr/api/subway/${PUBLIC_API_KEY}/json/realtimeStationArrival/0/5/${statnNm}`
+        `https://economic-mury.site/api-bundang/json/realtimeStationArrival/0/5/${statnNm}`
       ).then((res) => res.json());
     },
     enabled: !!statnNm,
