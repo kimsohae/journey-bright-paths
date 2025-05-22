@@ -23,7 +23,7 @@ export function useGetRealtimePosition({
   >({
     queryFn: async () => {
       return await fetch(
-        `http://swopenapi.seoul.go.kr/api/subway/${PUBLIC_API_KEY}/json/realtimePosition/0/20/${encodedSubwayNm}`
+        `https://swopenapi.seoul.go.kr/api/subway/${PUBLIC_API_KEY}/json/realtimePosition/0/20/${encodedSubwayNm}`
       ).then((res) => res.json());
     },
     queryKey: queryKeys.position,
