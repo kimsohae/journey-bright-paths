@@ -23,7 +23,7 @@ export function useGetRealtimePosition({
   >({
     queryFn: async () => {
       return await fetch(
-        `https://swopenapi.seoul.go.kr/api/subway/${PUBLIC_API_KEY}/json/realtimePosition/0/20/${encodedSubwayNm}`
+        `http://swopenapi.seoul.go.kr/api/subway/${PUBLIC_API_KEY}/json/realtimePosition/0/20/${encodedSubwayNm}`
       ).then((res) => res.json());
     },
     queryKey: queryKeys.position,
@@ -32,6 +32,7 @@ export function useGetRealtimePosition({
       data.realtimePositionList.filter(
         (item) => item.updnLine === (isUpShown ? "0" : "1")
       ),
+    enabled: !!encodedSubwayNm,
   });
 
   return { data, refetch };
