@@ -70,7 +70,9 @@ export default {
           peach: '#FDE1D3',
           grey: '#8E9196',
           dark: '#1A1F2C',
-        }
+        },
+		newBundang: '#d20f46'
+		
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

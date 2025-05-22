@@ -1,21 +1,13 @@
 
 import { useState, useEffect } from 'react';
-import { useToast } from '@/components/ui/use-toast';
 import { 
   saveRoute, 
   createNewRoute, 
   getShareableUrl, 
   getRouteFromUrl 
 } from '@/utils/routeUtils';
+import { Waypoint } from '@/types/Position';
 
-export interface Waypoint {
-  id: string;
-  longitude: number;
-  latitude: number;
-  name?: string;
-  description?: string;
-  imageUrl?: string;
-}
 
 export interface Route {
   id: string;
@@ -26,7 +18,6 @@ export interface Route {
 }
 
 export function useRoute() {
-  const { toast } = useToast();
   
   const [routeTitle, setRouteTitle] = useState('My Travel Route');
   const [routeDescription, setRouteDescription] = useState('');

@@ -1,141 +1,44 @@
-
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { ChevronUp, ChevronDown, MapPin, Route, Share } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import WaypointPanel from './WaypointPanel';
-import RoutePanel from './RoutePanel';
-
-interface Waypoint {
-  id: string;
-  longitude: number;
-  latitude: number;
-  name?: string;
-  description?: string;
-  imageUrl?: string;
-}
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Waypoint } from "@/types/Position";
+import { useGetRealtimeArrival } from "@/hooks/use-realtime-arrival";
 
 interface MobilePanelProps {
-  waypoints: Waypoint[];
-  selectedWaypoint: Waypoint | null;
-  onWaypointSelect: (waypoint: Waypoint) => void;
-  onWaypointUpdate: (waypoint: Waypoint) => void;
-  onWaypointDelete: (id: string) => void;
-  routeTitle: string;
-  routeDescription: string;
-  onTitleChange: (title: string) => void;
-  onDescriptionChange: (desc: string) => void;
-  onSave: () => void;
-  onShare: () => void;
+  waypoint: Waypoint;
 }
 
-const MobilePanel: React.FC<MobilePanelProps> = ({
-  waypoints,
-  selectedWaypoint,
-  onWaypointSelect,
-  onWaypointUpdate,
-  onWaypointDelete,
-  routeTitle,
-  routeDescription,
-  onTitleChange,
-  onDescriptionChange,
-  onSave,
-  onShare
-}) => {
-  const [expanded, setExpanded] = useState(false);
-  const [activeTab, setActiveTab] = useState<'route' | 'waypoint'>(selectedWaypoint ? 'waypoint' : 'route');
-
-  const toggleExpanded = () => {
-    setExpanded(!expanded);
-  };
-
-  // When a waypoint is selected, show the waypoint panel and expand if collapsed
-  React.useEffect(() => {
-    if (selectedWaypoint) {
-      setActiveTab('waypoint');
-      if (!expanded) {
-        setExpanded(true);
-      }
-    } else {
-      setActiveTab('route');
-    }
-  }, [selectedWaypoint]);
-
+const MobilePanel: React.FC<MobilePanelProps> = ({ waypoint }) => {
+  const { data } = useGetRealtimeArrival(encodeURIComponent(waypoint?.name));
   return (
-    <div 
+    <div
       className={cn(
-        "fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-lg transition-all duration-300 z-10",
-        expanded ? "h-[85vh]" : "h-24"
+        "fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-lg transition-all duration-300 z-10 h-fit"
       )}
     >
-      <div className="p-4 flex justify-between items-center">
-        <div>
-          <h2 className="font-bold text-travel-dark">
-            {selectedWaypoint ? 'Waypoint Details' : (routeTitle || 'My Travel Route')}
-          </h2>
-          <p className="text-xs text-muted-foreground">
-            {waypoints.length} waypoints
-          </p>
-        </div>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={toggleExpanded}
-          aria-label={expanded ? 'Collapse panel' : 'Expand panel'}
-        >
-          {expanded ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
-        </Button>
-      </div>
-
-      {expanded && (
-        <div className="px-4 pb-4 overflow-y-auto h-[calc(85vh-6rem)]">
-          <div className="flex mb-4 border-b">
-            <Button 
-              variant="ghost" 
-              className={cn(
-                "flex-1 rounded-none border-b-2 border-transparent",
-                activeTab === 'route' && "border-travel-purple text-travel-purple"
-              )}
-              onClick={() => setActiveTab('route')}
-            >
-              <Route size={16} className="mr-2" /> Route
-            </Button>
-            <Button 
-              variant="ghost" 
-              className={cn(
-                "flex-1 rounded-none border-b-2 border-transparent",
-                activeTab === 'waypoint' && "border-travel-purple text-travel-purple"
-              )}
-              onClick={() => setActiveTab('waypoint')}
-              disabled={!selectedWaypoint}
-            >
-              <MapPin size={16} className="mr-2" /> Waypoint
-            </Button>
+      <div className="p-4 flex flex-col justify-between ">
+        <h2 className="font-bold text-travel-dark">지하철 도착 정보</h2>
+        {waypoint ? (
+          <div className="inline-block">
+            <div>
+              <div>{waypoint?.name}</div>
+            </div>
+            <div>
+              <div className="flex flex-col text-sm">
+                {data?.length > 0
+                  ? data.map((item) => (
+                      <span key={item.arvlMsg}>{item.arvlMsg}</span>
+                    ))
+                  : "-"}
+              </div>
+            </div>
           </div>
-
-          {activeTab === 'route' && (
-            <RoutePanel 
-              title={routeTitle}
-              description={routeDescription}
-              waypoints={waypoints}
-              onTitleChange={onTitleChange}
-              onDescriptionChange={onDescriptionChange}
-              onWaypointSelect={onWaypointSelect}
-              onSave={onSave}
-              onShare={onShare}
-            />
-          )}
-
-          {activeTab === 'waypoint' && selectedWaypoint && (
-            <WaypointPanel 
-              waypoint={selectedWaypoint}
-              onUpdate={onWaypointUpdate}
-              onDelete={onWaypointDelete}
-              onClose={() => onWaypointSelect(null)}
-            />
-          )}
-        </div>
-      )}
+        ) : (
+          <span className="text-sm text-muted-foreground font-medium">
+            역 이름을 클릭하면 도착정보를 찾을 수 있어요
+          </span>
+        )}
+      </div>
     </div>
   );
 };

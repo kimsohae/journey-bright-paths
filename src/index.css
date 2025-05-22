@@ -1,5 +1,4 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -93,15 +92,16 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Poppins', sans-serif;
+    font-family: "Noto Sans KR", sans-serif;
   }
 
   .map-container {
     height: 100%;
     width: 100%;
   }
-  
-  .mapboxgl-ctrl-logo, .mapboxgl-ctrl-bottom-right {
+
+  .mapboxgl-ctrl-logo,
+  .mapboxgl-ctrl-bottom-right {
     display: none !important;
   }
 }
