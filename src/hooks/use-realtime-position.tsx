@@ -1,12 +1,15 @@
 import { queryKeys } from "@/constants/queryKey";
-import { RealtimePosition, RealtimePositionResp } from "@/types/Position";
+import { Config } from "@/lib/config";
+import {
+  RealtimePosition,
+  RealtimePositionResp,
+  SubwayNm,
+} from "@/types/Position";
 import { useQuery } from "@tanstack/react-query";
-
-const PUBLIC_API_KEY = import.meta.env.VITE_PUBLIC_API_KEY;
 
 interface RealTimePositionParam {
   isUpShown?: boolean;
-  subwayNm?: "bundang" | "newBundang";
+  subwayNm?: SubwayNm;
 }
 export function useGetRealtimePosition({
   isUpShown = true,
@@ -14,26 +17,42 @@ export function useGetRealtimePosition({
 }: RealTimePositionParam) {
   const encodedSubwayNm =
     subwayNm === "bundang"
-      ? encodeURIComponent("분당선")
+      ? encodeURIComponent("수인분당선")
       : encodeURIComponent("신분당선");
+  const count = subwayNm === "bundang" ? "30" : "20";
+
   const { data, refetch } = useQuery<
     RealtimePositionResp,
     unknown,
-    RealtimePosition[]
+    {
+      status: number;
+      list: RealtimePosition[];
+    }
   >({
     queryFn: async () => {
       return await fetch(
-        `https://economic-mury.site/api-bundang/json/realtimePosition/0/20/${encodedSubwayNm}`
+        `${Config.API_BASE_URL}/json/realtimePosition/0/${count}/${encodedSubwayNm}`
       ).then((res) => res.json());
     },
-    queryKey: queryKeys.position,
+    queryKey: queryKeys.position(subwayNm),
     refetchInterval: 30 * 1000, // 30s
-    select: (data) =>
-      data.realtimePositionList.filter(
-        (item) => item.updnLine === (isUpShown ? "0" : "1")
-      ),
+    select: (data) => {
+      const status = data.status || data.errorMessage.status;
+      const list = data.realtimePositionList
+        ? data.realtimePositionList.filter(
+            (item) => item.updnLine === (isUpShown ? "0" : "1")
+          )
+        : [];
+
+      const result = {
+        status,
+        list,
+      };
+      return result;
+    },
     enabled: !!encodedSubwayNm,
+    // throwOnError: true,
   });
 
-  return { data, refetch };
+  return { data };
 }

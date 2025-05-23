@@ -1,10 +1,10 @@
 export const SUBWAY_ID =  {
   newBundang : "1077",  // 신분당선
-  suinBundang : "1075", // 수인분당선
+  bundang : "1075", // 수인분당선
 } as const
 
 export type SubwayId = typeof SUBWAY_ID[keyof typeof SUBWAY_ID];
-
+export type SubwayNm = keyof typeof SUBWAY_ID;
 
 export interface ApiErrorMessage {
   status: number;
@@ -33,12 +33,14 @@ export interface RealtimePosition {
 }
 
 export interface RealtimePositionResp {
-  errorMessage: ApiErrorMessage;
+  status?: number;
+  errorMessage?: ApiErrorMessage;
   realtimePositionList: RealtimePosition[];
 }
 
 export interface RealtimeArrivalResp {
-    errorMessage: {
+    status?: number
+    errorMessage?: {
       status: number;
       code: string;
       message: string;

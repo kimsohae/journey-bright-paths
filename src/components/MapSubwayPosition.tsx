@@ -3,20 +3,36 @@ import { useGetRealtimePosition } from "@/hooks/use-realtime-position";
 import { RealtimePosition } from "@/types/Position";
 import { Marker } from "react-map-gl";
 import { TriangleIcon } from "lucide-react";
-import { useSearchParam } from "@/context/SearchContext";
-import { NEW_BUNDANG_MAP, NEW_BUNDANG_WAYPOINTS } from "@/constants/subway";
+import { useParamValue } from "@/context/SearchContext";
+import {
+  BUNDANG_MAP,
+  BUNDANG_WAYPOINTS,
+  NEW_BUNDANG_MAP,
+  NEW_BUNDANG_WAYPOINTS,
+} from "@/constants/subway";
 import { getBearing } from "@/lib/utils";
 
-const MapSubwayPosition = memo(() => {
-  const { isUpShown } = useSearchParam();
+interface Props {
+  subwayNm: "bundang" | "newBundang";
+}
+
+const MapSubwayPosition = memo(({ subwayNm }: Props) => {
+  const { isUpShown } = useParamValue();
   const { data } = useGetRealtimePosition({
     isUpShown,
+    subwayNm,
   });
+  const subwayMap = subwayNm === "bundang" ? BUNDANG_MAP : NEW_BUNDANG_MAP;
+  const subwayWaypoints =
+    subwayNm === "bundang" ? BUNDANG_WAYPOINTS : NEW_BUNDANG_WAYPOINTS;
+
+  console.log({ data });
+
   return (
     <>
-      {data?.map((position: RealtimePosition) => {
+      {data?.list.map((position: RealtimePosition) => {
         const { statnId, trainSttus, updnLine } = position;
-        const { latitude, longitude, index } = NEW_BUNDANG_MAP[statnId];
+        const { latitude, longitude, index } = subwayMap[statnId];
         let [positionLatitude, positionLongitude] = [latitude, longitude];
         let targetPosition;
         let bearing; // 방향
@@ -26,13 +42,13 @@ const MapSubwayPosition = memo(() => {
         if (trainSttus === "0") {
           targetPosition =
             updnLine === "0"
-              ? NEW_BUNDANG_WAYPOINTS[index - 1]
-              : NEW_BUNDANG_WAYPOINTS[index + 1];
+              ? subwayWaypoints[index - 1]
+              : subwayWaypoints[index + 1];
         } else if (trainSttus === "1" || trainSttus === "2") {
           targetPosition =
             updnLine === "0"
-              ? NEW_BUNDANG_WAYPOINTS[index + 1]
-              : NEW_BUNDANG_WAYPOINTS[index - 1];
+              ? subwayWaypoints[index + 1]
+              : subwayWaypoints[index - 1];
         }
 
         positionLatitude =
@@ -62,17 +78,14 @@ const MapSubwayPosition = memo(() => {
             latitude={positionLatitude}
             longitude={positionLongitude}
           >
-            {updnLine === "0" ? (
-              <TriangleIcon
-                className=" w-5 h-5 fill-newBundang stroke-newBundang"
-                transform={`rotate(${bearing})`}
-              />
-            ) : (
-              <TriangleIcon
-                className="w-5 h-5 fill-newBundang stroke-newBundang"
-                transform={`rotate(${bearing})`}
-              />
-            )}
+            <TriangleIcon
+              className={`w-5 h-5 ${
+                subwayNm === "bundang"
+                  ? "fill-bundang stroke-bundang"
+                  : "fill-newBundang stroke-newBundang"
+              }`}
+              transform={`rotate(${bearing})`}
+            />
           </Marker>
         );
       })}

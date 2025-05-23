@@ -1,5 +1,6 @@
 import { queryKeys } from "@/constants/queryKey";
-import { useSearchParam } from "@/context/SearchContext";
+import { useParamValue } from "@/context/SearchContext";
+import { Config } from "@/lib/config";
 import {
   RealtimeArrival,
   RealtimeArrivalResp,
@@ -7,40 +8,47 @@ import {
 } from "@/types/Position";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-const PUBLIC_API_KEY = import.meta.env.VITE_PUBLIC_API_KEY;
-
 export function useGetRealtimeArrival(statnNm: string) {
   const queryClient = useQueryClient();
-  const { isUpShown } = useSearchParam();
+  const { isUpShown, subwayNm } = useParamValue();
   const { data, refetch } = useQuery<
     RealtimeArrivalResp,
     unknown,
-    RealtimeArrival[]
+    {
+      status: number;
+      list: RealtimeArrival[];
+    }
   >({
     queryKey: queryKeys.arrival(statnNm),
     queryFn: async () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.position });
+      queryClient.refetchQueries({ queryKey: queryKeys.position(subwayNm) });
       return await fetch(
-        `https://economic-mury.site/api-bundang/json/realtimeStationArrival/0/5/${statnNm}`
+        `${
+          Config.API_BASE_URL
+        }/json/realtimeStationArrival/0/5/${encodeURIComponent(statnNm)}`
       ).then((res) => res.json());
     },
     enabled: !!statnNm,
     select: (data) => {
       const realtimeArrivalList = data.realtimeArrivalList;
-      if (!realtimeArrivalList) return [];
+      const status = data.status || data.errorMessage.status;
 
-      return realtimeArrivalList
-        .filter(
-          (item) =>
-            item.subwayId === SUBWAY_ID.newBundang &&
-            (isUpShown ? item.updnLine === "상행" : item.updnLine === "하행")
-        )
-        .map((item) => ({
-          arvlMsg: item.arvlMsg2,
-          statnId: item.statnId,
-          updnLine: item.updnLine === "상행" ? "0" : "1",
-          recptnDt: item.recptnDt,
-        }));
+      if (!realtimeArrivalList) return { status, list: [] };
+      return {
+        status,
+        list: realtimeArrivalList
+          .filter(
+            (item) =>
+              item.subwayId === SUBWAY_ID[subwayNm] &&
+              (isUpShown ? item.updnLine === "상행" : item.updnLine === "하행")
+          )
+          .map((item) => ({
+            arvlMsg: item.arvlMsg2,
+            statnId: item.statnId,
+            updnLine: item.updnLine === "상행" ? "0" : "1",
+            recptnDt: item.recptnDt,
+          })),
+      };
     },
     staleTime: 1000,
   });

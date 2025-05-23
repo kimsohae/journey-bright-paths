@@ -1,15 +1,10 @@
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Waypoint } from "@/types/Position";
 import { useGetRealtimeArrival } from "@/hooks/use-realtime-arrival";
+import { useParamValue } from "@/context/SearchContext";
 
-interface MobilePanelProps {
-  waypoint: Waypoint;
-}
-
-const MobilePanel: React.FC<MobilePanelProps> = ({ waypoint }) => {
-  const { data } = useGetRealtimeArrival(encodeURIComponent(waypoint?.name));
+const MobilePanel: React.FC = () => {
+  const { statn } = useParamValue();
+  const { data } = useGetRealtimeArrival(statn?.name);
   return (
     <div
       className={cn(
@@ -18,16 +13,20 @@ const MobilePanel: React.FC<MobilePanelProps> = ({ waypoint }) => {
     >
       <div className="p-4 flex flex-col justify-between ">
         <h2 className="font-bold text-travel-dark">지하철 도착 정보</h2>
-        {waypoint ? (
+        {statn ? (
           <div className="inline-block">
             <div>
-              <div>{waypoint?.name}</div>
+              <div>{statn?.name}</div>
             </div>
             <div>
               <div className="flex flex-col text-sm">
-                {data?.length > 0
-                  ? data.map((item) => (
-                      <span key={item.arvlMsg}>{item.arvlMsg}</span>
+                {data?.list.length > 0
+                  ? data.list.map((item) => (
+                      <span
+                        key={`${item.arvlMsg}-${item.statnId}-${item.updnLine}-${item.recptnDt}`}
+                      >
+                        {item.arvlMsg}
+                      </span>
                     ))
                   : "-"}
               </div>

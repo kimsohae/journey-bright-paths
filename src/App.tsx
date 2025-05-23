@@ -5,7 +5,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { SearchParamProvider } from "./context/SearchContext";
-import { ErrorBoundary } from "react-error-boundary";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,6 +17,7 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    {/* <ReactQueryDevtools initialIsOpen={false} />  */}
     <SearchParamProvider>
       <TooltipProvider>
         <BrowserRouter>

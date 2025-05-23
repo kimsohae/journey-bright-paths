@@ -1,28 +1,19 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import Map, {
   NavigationControl,
   MapRef,
   ViewStateChangeEvent,
 } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import mapboxgl from "mapbox-gl";
-import UpDownPanel from "./UpDownPanel";
-import { Waypoint } from "@/types/Position";
 import { BUNDANG_WAYPOINTS, NEW_BUNDANG_WAYPOINTS } from "@/constants/subway";
+import mapboxgl from "mapbox-gl";
+import SelectPanel from "./SelectPanel";
 import MapSubwayLine from "./MapSubwayLine";
+import { Config } from "@/lib/config";
 
-// We'll use a custom token input since the default one isn't working
-const DEFAULT_MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
+interface MapViewProps {}
 
-interface MapViewProps {
-  onWaypointSelect: (waypoint: Waypoint) => void;
-  selectedWaypoint: Waypoint | null;
-}
-
-const MapView: React.FC<MapViewProps> = ({
-  onWaypointSelect,
-  selectedWaypoint,
-}) => {
+const MapView: React.FC<MapViewProps> = ({}) => {
   const [viewState, setViewState] = useState({
     longitude: 127.078,
     latitude: 37.4003,
@@ -43,21 +34,6 @@ const MapView: React.FC<MapViewProps> = ({
     ]);
   };
 
-  // useEffect(() => {
-  //   // If we have waypoints, fit the map to show all waypoints
-  //   if (mapRef.current && NEW_BUNDANG_WAYPOINTS.length > 1) {
-  //     const bounds = new LngLatBounds();
-  //     NEW_BUNDANG_WAYPOINTS.forEach((waypoint) => {
-  //       bounds.extend([waypoint.longitude, waypoint.latitude]);
-  //     });
-
-  //     mapRef.current.fitBounds(bounds, {
-  //       padding: 100,
-  //       duration: 1000,
-  //     });
-  //   }
-  // }, [NEW_BUNDANG_WAYPOINTS]);
-
   useEffect(() => {
     const handleResize = () => {
       mapRef.current?.resize();
@@ -72,14 +48,14 @@ const MapView: React.FC<MapViewProps> = ({
 
   return (
     <div className="h-full w-full rounded-xl overflow-hidden relative">
-      <UpDownPanel />
+      <SelectPanel />
       <Map
         ref={mapRef}
         {...viewState}
         style={{ width: "100%", height: "100%" }}
         mapStyle="mapbox://styles/mapbox/light-v11"
         onMove={handleViewStateChange}
-        mapboxAccessToken={DEFAULT_MAPBOX_TOKEN}
+        mapboxAccessToken={Config.MAPBOX_TOKEN}
         attributionControl={false}
         reuseMaps
         maxZoom={14}
@@ -88,10 +64,11 @@ const MapView: React.FC<MapViewProps> = ({
       >
         <NavigationControl position="top-right" />
         {/** 신분당선 */}
+        <MapSubwayLine subwayNm="bundang" waypoints={BUNDANG_WAYPOINTS} />
+
         <MapSubwayLine
+          subwayNm="newBundang"
           waypoints={NEW_BUNDANG_WAYPOINTS}
-          onWaypointSelect={onWaypointSelect}
-          selectedWaypoint={selectedWaypoint}
         />
       </Map>
     </div>

@@ -71,7 +71,8 @@ export default {
           grey: '#8E9196',
           dark: '#1A1F2C',
         },
-		newBundang: '#d20f46'
+		newBundang: '#D20F46',
+		bundang: '#FABE00',
 		
 			},
 			borderRadius: {

@@ -27,7 +27,7 @@ export const NEW_BUNDANG_MAP = NEW_BUNDANG_WAYPOINTS.reduce(
   },
   {}
 );
-export const BUNDANG_MAP = NEW_BUNDANG_WAYPOINTS.reduce((acc, cur, index) => {
+export const BUNDANG_MAP = BUNDANG_WAYPOINTS.reduce((acc, cur, index) => {
   if (cur.id) {
     const waypoint = { ...cur, index };
     acc[cur.id] = waypoint;
