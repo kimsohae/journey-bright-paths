@@ -1,26 +1,20 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import Map, {
-  Marker,
   NavigationControl,
-  Source,
-  Layer,
   MapRef,
   ViewStateChangeEvent,
-  MapLayerMouseEvent,
 } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { cn } from "@/lib/utils";
-import mapboxgl, { LngLatBounds } from "mapbox-gl";
-import MapSubwayPosition from "./MapSubwayPosition";
+import mapboxgl from "mapbox-gl";
 import UpDownPanel from "./UpDownPanel";
 import { Waypoint } from "@/types/Position";
 import { BUNDANG_WAYPOINTS, NEW_BUNDANG_WAYPOINTS } from "@/constants/subway";
+import MapSubwayLine from "./MapSubwayLine";
 
 // We'll use a custom token input since the default one isn't working
 const DEFAULT_MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
 interface MapViewProps {
-  onWaypointAdd: (waypoint: Waypoint) => void;
   onWaypointSelect: (waypoint: Waypoint) => void;
   selectedWaypoint: Waypoint | null;
 }
@@ -36,28 +30,6 @@ const MapView: React.FC<MapViewProps> = ({
   });
 
   const mapRef = useRef<MapRef>(null);
-
-  // Generate GeoJSON for route line
-  const bundangRouteGeoJson = {
-    type: "Feature",
-    properties: {},
-    geometry: {
-      type: "LineString",
-      coordinates: BUNDANG_WAYPOINTS.map((wp) => [wp.longitude, wp.latitude]),
-    },
-  };
-
-  const newBundangRouteGeoJson = {
-    type: "Feature",
-    properties: {},
-    geometry: {
-      type: "LineString",
-      coordinates: NEW_BUNDANG_WAYPOINTS.map((wp) => [
-        wp.longitude,
-        wp.latitude,
-      ]),
-    },
-  };
 
   const handleViewStateChange = useCallback((evt: ViewStateChangeEvent) => {
     setViewState(evt.viewState);
@@ -100,7 +72,6 @@ const MapView: React.FC<MapViewProps> = ({
 
   return (
     <div className="h-full w-full rounded-xl overflow-hidden relative">
-      {/* Search Bar */}
       <UpDownPanel />
       <Map
         ref={mapRef}
@@ -116,53 +87,12 @@ const MapView: React.FC<MapViewProps> = ({
         onLoad={handleMapLoad}
       >
         <NavigationControl position="top-right" />
-
         {/** 신분당선 */}
-        {NEW_BUNDANG_WAYPOINTS.length > 1 && (
-          <Source
-            id="route"
-            type="geojson"
-            data={newBundangRouteGeoJson as any}
-          >
-            <Layer
-              id="route-line"
-              type="line"
-              paint={{
-                "line-color": "#D20F46",
-                "line-width": 4,
-                "line-opacity": 0.8,
-              }}
-            />
-            <MapSubwayPosition />
-          </Source>
-        )}
-        {NEW_BUNDANG_WAYPOINTS.map((waypoint) => (
-          <Marker
-            key={waypoint.id}
-            longitude={waypoint.longitude}
-            latitude={waypoint.latitude}
-            anchor="center"
-            onClick={(e) => {
-              e.originalEvent.stopPropagation();
-              onWaypointSelect(waypoint);
-            }}
-          >
-            <div className="cursor-pointer">
-              <div
-                className={cn(
-                  "relative z-0 w-3 h-3 transition-all duration-300 rounded-full border-2 drop-shadow-lg ",
-                  selectedWaypoint?.id === waypoint.id
-                    ? "bg-newBundang border-white scale-125"
-                    : "bg-white border-newBundang"
-                )}
-              >
-                <div className="z-10 absolute w-fit top-1/2 left-3 transform -translate-y-1/2  bg-white px-2 py-1 rounded-full shadow-md text-xs text-gray-900 font-semibold whitespace-nowrap">
-                  {waypoint.name}
-                </div>
-              </div>
-            </div>
-          </Marker>
-        ))}
+        <MapSubwayLine
+          waypoints={NEW_BUNDANG_WAYPOINTS}
+          onWaypointSelect={onWaypointSelect}
+          selectedWaypoint={selectedWaypoint}
+        />
       </Map>
     </div>
   );

@@ -13,7 +13,6 @@ interface MainContentProps {
 
 const MainContent: React.FC<MainContentProps> = ({
   selectedWaypoint,
-  onWaypointAdd,
   onWaypointSelect,
 }) => {
   const isMobile = useIsMobile();
@@ -23,7 +22,6 @@ const MainContent: React.FC<MainContentProps> = ({
       {/* Map Area */}
       <div className="flex-grow relative">
         <MapView
-          onWaypointAdd={onWaypointAdd}
           onWaypointSelect={onWaypointSelect}
           selectedWaypoint={selectedWaypoint}
         />
@@ -31,8 +29,11 @@ const MainContent: React.FC<MainContentProps> = ({
 
       {/* Desktop Sidebar */}
       {!isMobile && (
-        <div className="w-80 bg-white/70 backdrop-blur-md p-4 shadow-lg overflow-y-auto">
+        <div className="w-80 bg-white/70 backdrop-blur-md p-4 shadow-lg overflow-y-auto flex flex-col justify-between">
           <WaypointPanel waypoint={selectedWaypoint} />
+          <span className="text-xs text-gray-400/80 text-center">
+            지하철 위치 정보는 30초마다 갱신됩니다.
+          </span>
         </div>
       )}
 

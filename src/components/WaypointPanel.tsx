@@ -14,7 +14,6 @@ const WaypointPanel: React.FC<WaypointPanelProps> = ({ waypoint }) => {
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">지하철 도착 정보</h3>
       </div>
-
       <div className="space-y-4">
         {waypoint ? (
           <>
