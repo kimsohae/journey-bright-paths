@@ -15,5 +15,6 @@
 - Tailwind CSS
 - react-map-gl
 
+
 - 프로젝트 초기 세팅/UI 레이아웃: Lovable
 - 배포: Vercel
