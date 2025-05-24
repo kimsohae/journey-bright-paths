@@ -26,8 +26,6 @@ const MapSubwayPosition = memo(({ subwayNm }: Props) => {
   const subwayWaypoints =
     subwayNm === "bundang" ? BUNDANG_WAYPOINTS : NEW_BUNDANG_WAYPOINTS;
 
-  console.log({ data });
-
   return (
     <>
       {data?.list.map((position: RealtimePosition) => {
