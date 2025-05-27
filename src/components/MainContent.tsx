@@ -1,5 +1,4 @@
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Waypoint } from "@/types/Position";
 import MapView from "@/components/MapView";
 import WaypointPanel from "@/components/WaypointPanel";
 import MobilePanel from "@/components/MobilePanel";
@@ -18,9 +17,18 @@ const MainContent: React.FC = ({}) => {
       {!isMobile && (
         <div className="w-80 bg-white/70 backdrop-blur-md p-4 shadow-lg overflow-y-auto flex flex-col justify-between">
           <WaypointPanel />
-          <span className="text-xs text-gray-400/80 text-center">
-            지하철 위치 정보는 30초마다 갱신됩니다.
-          </span>
+          <div className="flex flex-col gap-1 text-xs text-gray-400/80 text-center">
+            <span>지하철 위치 정보는 30초마다 갱신됩니다.</span>
+            <a
+              href="https://github.com/kimsohae/journey-bright-paths"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-full justify-center gap-1 text-gray-800"
+            >
+              <img src="/github.webp" alt="github" width={16} height={16} />
+              Github
+            </a>
+          </div>
         </div>
       )}
 
