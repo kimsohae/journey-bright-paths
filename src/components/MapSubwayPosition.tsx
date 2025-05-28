@@ -82,7 +82,9 @@ const MapSubwayPosition = memo(({ subwayNm }: Props) => {
                   ? "fill-bundang stroke-bundang"
                   : "fill-newBundang stroke-newBundang"
               }`}
-              transform={`rotate(${bearing})`}
+              style={{
+                rotate: `${bearing}deg`,
+              }}
             />
           </Marker>
         );
