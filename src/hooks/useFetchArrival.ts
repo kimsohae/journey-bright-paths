@@ -4,6 +4,7 @@ import { fetchPublicApi } from "@/lib/fetch";
 import { RealtimeArrivalElement, RealtimeArrivalResp } from "@/types/arrival";
 import { ApiData, ApiError, SUBWAY_ID } from "@/types/common";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 /** select  */
 function filterAndMapArrival(
@@ -24,11 +25,12 @@ function filterAndMapArrival(
       statnId: item.statnId,
       updnLine: item.updnLine === "상행" ? "0" : "1",
       recptnDt: item.recptnDt,
+      trainLineNm: item.trainLineNm,
     }));
   return { status, list, code };
 }
 
-export function useGetRealtimeArrival(statnNm: string) {
+export function useFetchArrival(statnNm: string) {
   const queryClient = useQueryClient();
   const { isUpShown, subwayNm } = useParamValue();
 
@@ -49,14 +51,14 @@ export function useGetRealtimeArrival(statnNm: string) {
     placeholderData: (previousData) => previousData,
     select: (resp) => filterAndMapArrival(resp, subwayNm, isUpShown),
     retry: false,
-    staleTime: 30 * 1000,
+    staleTime: 1000,
   });
 
-  // useEffect(() => {
-  //   if (subwayNm) {
-  //     queryClient.refetchQueries({ queryKey: queryKeys.position(subwayNm) });
-  //   }
-  // }, [subwayNm, queryClient]);
+  useEffect(() => {
+    if (subwayNm) {
+      queryClient.refetchQueries({ queryKey: queryKeys.position(subwayNm) });
+    }
+  }, [subwayNm, queryClient]);
 
   return { data, refetch, error, isError, isSuccess };
 }

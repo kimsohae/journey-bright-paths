@@ -1,14 +1,14 @@
-import ArrivalInformation from "./ArrivalInformation";
+import DesktopInfo from "@/components/infoPanel/desktop/DesktopInfo";
 
 const DesktopPanel = () => {
   return (
     <div className="w-80 bg-white/70 backdrop-blur-md p-4 shadow-lg overflow-y-auto flex flex-col justify-between">
-      <div className="glass-card p-4 space-y-4 animate-fade-in">
+      <div className="glass-card p-4 space-y-4 animate-fade-in h-fit min-h-[250px]">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">지하철 도착 정보</h3>
         </div>
         <div className="space-y-4">
-          <ArrivalInformation />
+          <DesktopInfo />
         </div>
       </div>
       <div className="flex flex-col gap-1 text-xs text-gray-400/80 text-center">

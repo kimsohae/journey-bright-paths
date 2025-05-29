@@ -1,7 +1,7 @@
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import MapView from "@/components/MapView";
-import MobilePanel from "@/components/InfoPanel/MobilePanel";
-import DesktopPanel from "@/components/InfoPanel/DesktopPanel";
+import MobilePanel from "@/components/infoPanel/mobile/MobilePanel";
+import DesktopPanel from "@/components/infoPanel/desktop/DesktopPanel";
 
 const MainContent: React.FC = ({}) => {
   const isMobile = useIsMobile();

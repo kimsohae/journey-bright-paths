@@ -1,5 +1,5 @@
 import { Route } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const Header: React.FC = () => {
   const isMobile = useIsMobile();

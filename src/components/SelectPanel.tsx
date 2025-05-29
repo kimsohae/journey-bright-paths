@@ -1,7 +1,6 @@
-import { memo } from "react";
 import { ChevronDown } from "lucide-react";
 import { useParamAction, useParamValue } from "@/context/SearchContext";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { cn } from "@/lib/utils";
 
 const SelectPanel = () => {

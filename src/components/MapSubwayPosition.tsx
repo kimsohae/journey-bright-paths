@@ -1,5 +1,4 @@
 import { memo } from "react";
-import { useGetRealtimePosition } from "@/hooks/use-realtime-position";
 import { RealtimePosition } from "@/types/position";
 import { Marker } from "react-map-gl";
 import { TriangleIcon } from "lucide-react";
@@ -11,6 +10,7 @@ import {
   NEW_BUNDANG_WAYPOINTS,
 } from "@/constants/subway";
 import { getBearing } from "@/lib/utils";
+import { useFetchPosition } from "@/hooks/useFetchPosition";
 
 interface Props {
   subwayNm: "bundang" | "newBundang";
@@ -18,7 +18,7 @@ interface Props {
 
 const MapSubwayPosition = memo(({ subwayNm }: Props) => {
   const { isUpShown } = useParamValue();
-  const { data } = useGetRealtimePosition({
+  const { data } = useFetchPosition({
     isUpShown,
     subwayNm,
   });
@@ -29,7 +29,7 @@ const MapSubwayPosition = memo(({ subwayNm }: Props) => {
   return (
     <>
       {data?.list.map((position: RealtimePosition) => {
-        const { statnId, trainSttus, updnLine } = position;
+        const { statnId, trainSttus, updnLine, rowNum } = position;
         const { latitude, longitude, index } = subwayMap[statnId];
         let [positionLatitude, positionLongitude] = [latitude, longitude];
         let targetPosition;
@@ -72,7 +72,7 @@ const MapSubwayPosition = memo(({ subwayNm }: Props) => {
 
         return (
           <Marker
-            key={`${statnId}-${trainSttus}-${updnLine}`}
+            key={`${statnId}-${trainSttus}-${updnLine}-${rowNum}`}
             latitude={positionLatitude}
             longitude={positionLongitude}
           >

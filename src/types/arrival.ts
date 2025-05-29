@@ -17,6 +17,7 @@ export type RealtimeArrival = {
   arvlMsg3: string; // 두 번째 도착 메시지
   arvlCd: string; // 도착 코드 0: 진입, 1: 도착, 2: 출발, 3: 전역출발, 4:전역진입, 5:전역도착, 99:운행중
   lstcarAt: string; // 막차여부  0: 막차아님, 1: 막차
+  trainLineNm: string;
 };
 
 export type RealtimeArrivalResp = ApiResp<{
@@ -29,6 +30,7 @@ export type RealtimeArrivalElement = {
   statnId: string;
   updnLine: "0" | "1";
   recptnDt: string;
+  trainLineNm: string;
 }
 
 

@@ -25,7 +25,7 @@ function filterAndMapPosition(resp: RealtimePositionResp, isUpShown: boolean) {
   return result;
 }
 
-export function useGetRealtimePosition({
+export function useFetchPosition({
   isUpShown = true,
   subwayNm = "newBundang",
 }: RealTimePositionParam) {
