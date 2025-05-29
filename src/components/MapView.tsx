@@ -63,9 +63,9 @@ const MapView: React.FC<MapViewProps> = ({}) => {
         onLoad={handleMapLoad}
       >
         <NavigationControl position="top-right" />
-        {/** 신분당선 */}
+        {/** 수인분당선 */}
         <MapSubwayLine subwayNm="bundang" waypoints={BUNDANG_WAYPOINTS} />
-
+        {/** 신분당선 */}
         <MapSubwayLine
           subwayNm="newBundang"
           waypoints={NEW_BUNDANG_WAYPOINTS}

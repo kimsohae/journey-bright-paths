@@ -4,7 +4,7 @@ import { useParamAction, useParamValue } from "@/context/SearchContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
-const SelectPanel = memo(() => {
+const SelectPanel = () => {
   const isMobile = useIsMobile();
   const { isUpShown, subwayNm } = useParamValue();
   const setSearchValue = useParamAction();
@@ -59,6 +59,6 @@ const SelectPanel = memo(() => {
       </div>
     </div>
   );
-});
+};
 
 export default SelectPanel;

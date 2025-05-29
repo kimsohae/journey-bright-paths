@@ -1,8 +1,8 @@
 import { Marker, Source, Layer } from "react-map-gl";
-import { SubwayNm, Waypoint } from "@/types/Position";
 import MapSubwayPosition from "./MapSubwayPosition";
 import { cn } from "@/lib/utils";
 import { useParamAction, useParamValue } from "@/context/SearchContext";
+import { SubwayNm, Waypoint } from "@/types/common";
 
 const COLOR_HEX = {
   newBundang: "#D20F46",

@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { useGetRealtimePosition } from "@/hooks/use-realtime-position";
-import { RealtimePosition } from "@/types/Position";
+import { RealtimePosition } from "@/types/position";
 import { Marker } from "react-map-gl";
 import { TriangleIcon } from "lucide-react";
 import { useParamValue } from "@/context/SearchContext";

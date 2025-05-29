@@ -1,5 +1,5 @@
-import { SubwayNm } from "@/types/Position";
-import React, { createContext, useContext, useState } from "react";
+import { SubwayNm } from "@/types/position";
+import { createContext, useContext, useState } from "react";
 
 export interface SearchParam {
   isUpShown: boolean;

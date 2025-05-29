@@ -1,16 +1,30 @@
 import { queryKeys } from "@/constants/queryKey";
-import { Config } from "@/lib/config";
+import { fetchPublicApi } from "@/lib/fetch";
+import { ApiData } from "@/types/common";
 import {
   RealtimePosition,
+  RealTimePositionParam,
   RealtimePositionResp,
-  SubwayNm,
-} from "@/types/Position";
+} from "@/types/position";
 import { useQuery } from "@tanstack/react-query";
 
-interface RealTimePositionParam {
-  isUpShown?: boolean;
-  subwayNm?: SubwayNm;
+function filterAndMapPosition(resp: RealtimePositionResp, isUpShown: boolean) {
+  const status = resp.status || resp.errorMessage.status;
+  const code = resp.code || resp.errorMessage?.code;
+  const list = resp.realtimePositionList
+    ? resp.realtimePositionList.filter(
+        (item) => item.updnLine === (isUpShown ? "0" : "1")
+      )
+    : [];
+
+  const result = {
+    status,
+    code,
+    list,
+  };
+  return result;
 }
+
 export function useGetRealtimePosition({
   isUpShown = true,
   subwayNm = "newBundang",
@@ -21,37 +35,23 @@ export function useGetRealtimePosition({
       : encodeURIComponent("신분당선");
   const count = subwayNm === "bundang" ? "30" : "20";
 
-  const { data, refetch } = useQuery<
+  const { data } = useQuery<
     RealtimePositionResp,
     unknown,
-    {
-      status: number;
-      list: RealtimePosition[];
-    }
+    ApiData<RealtimePosition>
   >({
-    queryFn: async () => {
-      return await fetch(
-        `${Config.API_BASE_URL}/json/realtimePosition/0/${count}/${encodedSubwayNm}`
-      ).then((res) => res.json());
-    },
+    queryFn: async () =>
+      fetchPublicApi({
+        endpoint: "realtimePosition",
+        params: [0, count, encodedSubwayNm],
+      }),
     queryKey: queryKeys.position(subwayNm),
     refetchInterval: 30 * 1000, // 30s
-    select: (data) => {
-      const status = data.status || data.errorMessage.status;
-      const list = data.realtimePositionList
-        ? data.realtimePositionList.filter(
-            (item) => item.updnLine === (isUpShown ? "0" : "1")
-          )
-        : [];
-
-      const result = {
-        status,
-        list,
-      };
-      return result;
-    },
+    select: (data) => filterAndMapPosition(data, isUpShown),
+    retry: false,
     enabled: !!encodedSubwayNm,
-    // throwOnError: true,
+
+    throwOnError: true,
   });
 
   return { data };
