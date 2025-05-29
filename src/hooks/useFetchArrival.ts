@@ -33,17 +33,20 @@ function filterAndMapArrival(
 export function useFetchArrival(statnNm: string) {
   const queryClient = useQueryClient();
   const { isUpShown, subwayNm } = useParamValue();
-
+  
+  
   const { data, refetch, isSuccess, isError, error } = useQuery<
-    RealtimeArrivalResp,
-    ApiError,
-    ApiData<RealtimeArrivalElement>
+  RealtimeArrivalResp,
+  ApiError,
+  ApiData<RealtimeArrivalElement>
   >({
     queryKey: queryKeys.arrival(statnNm),
     queryFn: async () => {
+      // 검색 시 괄호 제거 ex) 양재(서초구청) ->양재
+      const trimmedStatnNm =  statnNm?.replace(/\(.*?\)/g, "").trim();
       const result = await fetchPublicApi({
         endpoint: "realtimeStationArrival",
-        params: [0, 5, encodeURIComponent(statnNm)],
+        params: [0, 10, encodeURIComponent(trimmedStatnNm)],
       });
       return result;
     },
