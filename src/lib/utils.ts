@@ -45,3 +45,14 @@ export function formatKoreanDateTime(datetimeStr) {
 
   return `${year}-${month}-${day} ${period} ${hour}시 ${minute}분 ${second}초`;
 }
+
+export function throttle(cb, delay) {
+  let timer;
+  return (...args) => {
+    if(timer) return;
+    timer = setTimeout(()=>{
+      cb(...args);
+      timer = null;
+    }, delay)
+  }
+}

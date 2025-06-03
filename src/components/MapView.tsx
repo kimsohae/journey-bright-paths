@@ -10,6 +10,7 @@ import mapboxgl from "mapbox-gl";
 import SelectPanel from "./SelectPanel";
 import MapSubwayLine from "./MapSubwayLine";
 import { Config } from "@/lib/config";
+import { throttle } from "@/lib/utils";
 
 interface MapViewProps {}
 
@@ -35,13 +36,13 @@ const MapView: React.FC<MapViewProps> = ({}) => {
   };
 
   useEffect(() => {
-    const handleResize = () => {
+    const handleResize = throttle(() => {
       mapRef.current?.resize();
-    };
+    }, 1000);
 
     // 강제 resize 트리거
     window.addEventListener("resize", handleResize);
-    setTimeout(handleResize, 100); // 초기 진입 시 한 번 강제 resize
+    setTimeout(handleResize, 1000); // 초기 진입 시 한 번 강제 resize
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
