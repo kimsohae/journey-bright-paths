@@ -11,6 +11,7 @@ import SelectPanel from "./SelectPanel";
 import MapSubwayLine from "./MapSubwayLine";
 import { Config } from "@/lib/config";
 import { throttle } from "@/lib/utils";
+import ParkMarker from "./ParkMarker";
 
 interface MapViewProps {}
 
@@ -53,16 +54,18 @@ const MapView: React.FC<MapViewProps> = ({}) => {
       <Map
         ref={mapRef}
         {...viewState}
+        // pitch={30}
         style={{ width: "100%", height: "100%" }}
         mapStyle="mapbox://styles/mapbox/light-v11"
         onMove={handleViewStateChange}
         mapboxAccessToken={Config.MAPBOX_TOKEN}
-        attributionControl={false}
+        attributionControl={true}
         reuseMaps
         maxZoom={14}
         minZoom={8}
         onLoad={handleMapLoad}
       >
+        <ParkMarker />
         <NavigationControl position="top-right" />
         {/** 수인분당선 */}
         <MapSubwayLine subwayNm="bundang" waypoints={BUNDANG_WAYPOINTS} />
