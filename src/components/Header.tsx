@@ -1,7 +1,7 @@
 import { Route } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
-const Header: React.FC = () => {
+export default function Header() {
   const isMobile = useIsMobile();
 
   return (
@@ -18,6 +18,4 @@ const Header: React.FC = () => {
       </div>
     </header>
   );
-};
-
-export default Header;
+}

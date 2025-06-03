@@ -12,9 +12,7 @@ import MapSubwayLine from "./MapSubwayLine";
 import { Config } from "@/lib/config";
 import { throttle } from "@/lib/utils";
 
-interface MapViewProps {}
-
-const MapView: React.FC<MapViewProps> = ({}) => {
+export default function MapView() {
   const [viewState, setViewState] = useState({
     longitude: 127.078,
     latitude: 37.4003,
@@ -74,6 +72,4 @@ const MapView: React.FC<MapViewProps> = ({}) => {
       </Map>
     </div>
   );
-};
-
-export default MapView;
+}
