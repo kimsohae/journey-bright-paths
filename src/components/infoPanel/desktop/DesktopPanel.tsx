@@ -1,6 +1,6 @@
 import DesktopInfo from "@/components/infoPanel/desktop/DesktopInfo";
 
-const DesktopPanel = () => {
+export default function DesktopPanel() {
   return (
     <div className="w-80 bg-white/70 backdrop-blur-md p-4 shadow-lg overflow-y-auto flex flex-col justify-between">
       <div className="glass-card p-4 space-y-4 animate-fade-in h-fit min-h-[250px]">
@@ -25,6 +25,4 @@ const DesktopPanel = () => {
       </div>
     </div>
   );
-};
-
-export default DesktopPanel;
+}

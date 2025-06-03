@@ -3,7 +3,7 @@ import MapView from "@/components/MapView";
 import MobilePanel from "@/components/infoPanel/mobile/MobilePanel";
 import DesktopPanel from "@/components/infoPanel/desktop/DesktopPanel";
 
-const MainContent: React.FC = ({}) => {
+export default function MainContent() {
   const isMobile = useIsMobile();
 
   return (
@@ -19,6 +19,4 @@ const MainContent: React.FC = ({}) => {
       {isMobile && <MobilePanel />}
     </main>
   );
-};
-
-export default MainContent;
+}

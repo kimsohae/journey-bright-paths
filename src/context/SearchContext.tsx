@@ -1,4 +1,4 @@
-import { SubwayNm } from "@/types/position";
+import { SubwayNm } from "@/types/common";
 import { createContext, useContext, useState } from "react";
 
 export interface SearchParam {
