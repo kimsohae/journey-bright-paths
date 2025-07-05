@@ -1,8 +1,7 @@
-import { memo } from "react";
+import { memo, useEffect, useMemo } from "react";
 import { RealtimePosition } from "@/types/position";
-import { Marker } from "react-map-gl";
+import { MapRef, Marker } from "react-map-gl";
 import { TriangleIcon } from "lucide-react";
-import { useParamValue } from "@/context/SearchContext";
 import {
   BUNDANG_MAP,
   BUNDANG_WAYPOINTS,
@@ -11,13 +10,19 @@ import {
 } from "@/constants/subway";
 import { getBearing } from "@/lib/utils";
 import { useFetchPosition } from "@/hooks/useFetchPosition";
+import Dimension3 from "./marker/Dimension3";
+import { useSearchParamStore } from "@/store/SearchContext";
 
 interface Props {
   subwayNm: "bundang" | "newBundang";
+  // mapRef: React.MutableRefObject<MapRef>;
 }
 
 const MapSubwayPosition = memo(({ subwayNm }: Props) => {
-  const { isUpShown } = useParamValue();
+  const isUpShown = useSearchParamStore(
+    (state) => state.searchParams.isUpShown
+  );
+  const is2D = useSearchParamStore((state) => state.searchParams.is2D);
   const { data } = useFetchPosition({
     isUpShown,
     subwayNm,
@@ -76,16 +81,20 @@ const MapSubwayPosition = memo(({ subwayNm }: Props) => {
             latitude={positionLatitude}
             longitude={positionLongitude}
           >
-            <TriangleIcon
-              className={`w-5 h-5 ${
-                subwayNm === "bundang"
-                  ? "fill-bundang stroke-bundang"
-                  : "fill-newBundang stroke-newBundang"
-              }`}
-              style={{
-                rotate: `${bearing}deg`,
-              }}
-            />
+            {!is2D && subwayNm === "newBundang" ? (
+              <Dimension3 bearing={bearing} isUpShown={isUpShown} />
+            ) : (
+              <TriangleIcon
+                className={`w-5 h-5 ${
+                  subwayNm === "bundang"
+                    ? "fill-bundang stroke-bundang"
+                    : "fill-newBundang stroke-newBundang"
+                }`}
+                style={{
+                  rotate: `${bearing}deg`,
+                }}
+              />
+            )}
           </Marker>
         );
       })}

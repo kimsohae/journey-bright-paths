@@ -1,13 +1,15 @@
 import { ChevronDown } from "lucide-react";
-import { useParamAction, useParamValue } from "@/context/SearchContext";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { cn } from "@/lib/utils";
+import { Switch } from "./ui/switch";
+import { useSearchParamStore } from "@/store/SearchContext";
 
 const SelectPanel = () => {
   const isMobile = useIsMobile();
-  const { isUpShown, subwayNm } = useParamValue();
-  const setSearchValue = useParamAction();
-
+  const { isUpShown, subwayNm, is2D } = useSearchParamStore(
+    (state) => state.searchParams
+  );
+  const updateParams = useSearchParamStore((state) => state.updateParams);
   return (
     <div
       className={cn([
@@ -22,7 +24,7 @@ const SelectPanel = () => {
               ? "font-bold text-gray-900"
               : "text-gray-400 font-thin"
           }`}
-          onClick={() => setSearchValue({ subwayNm: "newBundang" })}
+          onClick={() => updateParams({ subwayNm: "newBundang" })}
         >
           <div className="w-4 h-4 mr-1 rounded-full bg-newBundang" /> 신분당선
         </button>
@@ -32,18 +34,18 @@ const SelectPanel = () => {
               ? "font-bold text-gray-900"
               : "text-gray-400 font-thin"
           }`}
-          onClick={() => setSearchValue({ subwayNm: "bundang" })}
+          onClick={() => updateParams({ subwayNm: "bundang" })}
         >
           <div className="w-4 h-4 mr-1 rounded-full bg-bundang" /> 수인분당선
         </button>
       </div>
       <div className="h-px bg-gray-200" />
-      <div className="flex gap-2">
+      <div className="flex gap-2 ">
         <button
           className={`flex ${
             isUpShown ? "font-bold text-gray-900" : "text-gray-400 font-thin"
           }`}
-          onClick={() => setSearchValue({ isUpShown: true })}
+          onClick={() => updateParams({ isUpShown: true })}
         >
           <ChevronDown className="rotate-180" /> 상행
         </button>
@@ -51,10 +53,19 @@ const SelectPanel = () => {
           className={`flex ${
             !isUpShown ? "font-bold text-gray-900" : "text-gray-400 font-thin"
           }`}
-          onClick={() => setSearchValue({ isUpShown: false })}
+          onClick={() => updateParams({ isUpShown: false })}
         >
           <ChevronDown /> 하행
         </button>
+        {subwayNm === "newBundang" && (
+          <button
+            className={`flex text-gray-600 gap-1 justify-center ml-2`}
+            onClick={() => updateParams({ is2D: !is2D })}
+          >
+            3D
+            <Switch checked={!is2D} />
+          </button>
+        )}
       </div>
     </div>
   );

@@ -1,10 +1,10 @@
-import { Marker, Source, Layer } from "react-map-gl";
+import { Marker, Source, Layer, MapRef } from "react-map-gl";
 import MapSubwayPosition from "./MapSubwayPosition";
 import { cn } from "@/lib/utils";
-import { useParamAction, useParamValue } from "@/context/SearchContext";
 import { SubwayNm, Waypoint } from "@/types/common";
+import { useSearchParamStore } from "@/store/SearchContext";
 
-const COLOR_HEX = {
+export const COLOR_HEX = {
   newBundang: "#D20F46",
   bundang: "#FABE00",
 };
@@ -14,8 +14,10 @@ interface Props {
   waypoints: Waypoint[];
 }
 export default function MapSubwayLine({ subwayNm, waypoints }: Props) {
-  const { subwayNm: selectedSubwayNm, statn } = useParamValue();
-  const setParam = useParamAction();
+  const { subwayNm: selectedSubwayNm, statn } = useSearchParamStore(
+    (state) => state.searchParams
+  );
+  const setParam = useSearchParamStore((state) => state.updateParams);
   const isSelectedSubway = subwayNm === selectedSubwayNm;
   const lineColor = isSelectedSubway ? COLOR_HEX[subwayNm] : "#bebebe";
   const routeGeoJson = {

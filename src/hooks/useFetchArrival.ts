@@ -1,6 +1,6 @@
 import { queryKeys } from "@/constants/queryKey";
-import { useParamValue } from "@/context/SearchContext";
 import { fetchPublicApi } from "@/lib/fetch";
+import { useSearchParamStore } from "@/store/SearchContext";
 import { RealtimeArrivalElement, RealtimeArrivalResp } from "@/types/arrival";
 import { ApiData, ApiError, SUBWAY_ID } from "@/types/common";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -32,7 +32,7 @@ function filterAndMapArrival(
 
 export function useFetchArrival(statnNm: string) {
   const queryClient = useQueryClient();
-  const { isUpShown, subwayNm } = useParamValue();
+  const { isUpShown, subwayNm } = useSearchParamStore((state) => state.searchParams);;
   
   
   const { data, refetch, isSuccess, isError, error } = useQuery<
