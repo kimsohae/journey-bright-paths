@@ -1,6 +1,6 @@
 
-import newBundangList from "@/new_bundang_list.json";
-import bundangList from "@/bundang_list.json";
+import newBundangList from "@/data/new_bundang_list.json";
+import bundangList from "@/data/bundang_list.json";
 
 const NEW_BUNDANG_LIST = newBundangList;
 const BUNDANG_LIST = bundangList;
