@@ -11,13 +11,16 @@ import SelectPanel from "./SelectPanel";
 import MapSubwayLine from "./MapSubwayLine";
 import { Config } from "@/lib/config";
 import { throttle } from "@/lib/utils";
-import ParkMarker from "./ParkMarker";
+import { useSearchParamStore } from "@/store/SearchContext";
 
 export default function MapView() {
+  const is2D = useSearchParamStore((state) => state.searchParams.is2D);
+  const subwayNm = useSearchParamStore((state) => state.searchParams.subwayNm);
+  const is3DView = !is2D && subwayNm === "newBundang";
   const [viewState, setViewState] = useState({
     longitude: 127.078,
     latitude: 37.4003,
-    zoom: 10.5,
+    zoom: is3DView ? 12 : 10.5,
   });
 
   const mapRef = useRef<MapRef>(null);
@@ -52,7 +55,7 @@ export default function MapView() {
       <Map
         ref={mapRef}
         {...viewState}
-        // pitch={30}
+        pitch={is3DView ? 60 : 0}
         style={{ width: "100%", height: "100%" }}
         mapStyle="mapbox://styles/mapbox/light-v11"
         onMove={handleViewStateChange}
@@ -63,7 +66,6 @@ export default function MapView() {
         minZoom={8}
         onLoad={handleMapLoad}
       >
-        <ParkMarker />
         <NavigationControl position="top-right" />
         {/** 수인분당선 */}
         <MapSubwayLine subwayNm="bundang" waypoints={BUNDANG_WAYPOINTS} />
