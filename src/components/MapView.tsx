@@ -49,6 +49,13 @@ export default function MapView() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    if (is3DView) {
+      // 현재 3D에서 rotate 시 지하철 방향 전환 안되므로, bearing을 0으로 막아둔다
+      mapRef.current?.getMap().easeTo({ bearing: 0 });
+    }
+  }, [is3DView]);
+
   return (
     <div className="h-full w-full rounded-xl overflow-hidden relative">
       <SelectPanel />
@@ -62,6 +69,7 @@ export default function MapView() {
         mapboxAccessToken={Config.MAPBOX_TOKEN}
         attributionControl={true}
         reuseMaps
+        touchZoomRotate={is3DView ? false : true}
         maxZoom={14}
         minZoom={8}
         onLoad={handleMapLoad}
