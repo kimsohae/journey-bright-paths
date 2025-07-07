@@ -58,13 +58,14 @@ const SelectPanel = () => {
           <ChevronDown /> 하행
         </button>
         {subwayNm === "newBundang" && (
-          <button
+          <div
+            role="button"
             className={`flex text-gray-600 gap-1 justify-center ml-2`}
             onClick={() => updateParams({ is2D: !is2D })}
           >
             3D
-            <Switch checked={!is2D} />
-          </button>
+            <Switch checked={!is2D}>3D</Switch>
+          </div>
         )}
       </div>
     </div>
