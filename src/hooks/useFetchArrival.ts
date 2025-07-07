@@ -30,9 +30,10 @@ function filterAndMapArrival(
   return { status, list, code };
 }
 
-export function useFetchArrival(statnNm: string) {
+export function useFetchArrival() {
+  const { isUpShown, subwayNm, statn} = useSearchParamStore((state) => state.searchParams);
+  const statnName = statn?.name;
   const queryClient = useQueryClient();
-  const { isUpShown, subwayNm } = useSearchParamStore((state) => state.searchParams);;
   
   
   const { data, refetch, isSuccess, isError, error } = useQuery<
@@ -40,17 +41,17 @@ export function useFetchArrival(statnNm: string) {
   ApiError,
   ApiData<RealtimeArrivalElement>
   >({
-    queryKey: queryKeys.arrival(statnNm),
+    queryKey: queryKeys.arrival(statnName),
     queryFn: async () => {
       // 검색 시 괄호 제거 ex) 양재(서초구청) ->양재
-      const trimmedStatnNm =  statnNm?.replace(/\(.*?\)/g, "").trim();
+      const trimmedStatnNm =  statnName?.replace(/\(.*?\)/g, "").trim();
       const result = await fetchPublicApi({
         endpoint: "realtimeStationArrival",
         params: [0, 10, encodeURIComponent(trimmedStatnNm)],
       });
       return result;
     },
-    enabled: !!statnNm,
+    enabled: !!statnName,
     placeholderData: (previousData) => previousData,
     select: (resp) => filterAndMapArrival(resp, subwayNm, isUpShown),
     retry: false,
@@ -63,5 +64,5 @@ export function useFetchArrival(statnNm: string) {
     }
   }, [subwayNm, queryClient]);
 
-  return { data, refetch, error, isError, isSuccess };
+  return { data, refetch, error, isError, isSuccess, statn };
 }
