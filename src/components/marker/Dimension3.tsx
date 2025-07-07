@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import * as THREE from "three";
 import { COLOR_HEX } from "../MapSubwayLine";
 import { useSearchParamStore } from "@/store/SearchContext";
@@ -15,7 +15,7 @@ const width = 50;
 const height = 50;
 const radius = 4;
 
-export default function Dimension3({ bearing, isUpShown }: Props) {
+function Dimension3({ bearing, isUpShown }: Props) {
   const mountRef = useRef<HTMLDivElement>(null);
   const { subwayNm } = useSearchParamStore((state) => state.searchParams);
   const color = COLOR_HEX[subwayNm];
@@ -97,3 +97,5 @@ export default function Dimension3({ bearing, isUpShown }: Props) {
 
   return <div ref={mountRef} />;
 }
+
+export default memo(Dimension3);
